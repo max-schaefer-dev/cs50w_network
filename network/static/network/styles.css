@@ -1,0 +1,23 @@
+h1, h2, h3, h4, h5, h6{
+    font-weight:600;
+}
+.element-control{
+    padding:10px 20px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+}
+
+.btn{
+    line-height:initial;
+    margin-top:10px;
+}
+
+/* NAVBAR */
+.navbar .container{
+    text-align:left;
+}
+
+/* FORMS */
+form label{
+    font-weight: 700;
+}

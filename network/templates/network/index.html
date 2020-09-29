@@ -1,5 +1,17 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+<div class="container">
+    <h2>All Posts</h2>
+    <div class="element-control">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ newPostForm }}
+                <input type="hidden" name="user" value="{{ user.username }}">
+                <input type="submit" class="btn btn-primary" value="Post">
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
