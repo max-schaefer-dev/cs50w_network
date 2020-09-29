@@ -2,32 +2,46 @@
 
 {% block body %}
 <div class="container">
-    <h2>All Posts</h2>
-    <div class="element-control">
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ newPostForm }}
-                <input type="hidden" name="user" value="{{ user.username }}">
-                <input type="submit" class="btn btn-primary" value="Post">
-            </div>
-        </form>
+    <div class="allposts">
+        <h2>All Posts</h2>
+        <div class="element-control">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ newPostForm }}
+                    <input type="hidden" name="user" value="{{ user.username }}">
+                    <input type="submit" class="btn btn-primary" value="Post">
+                </div>
+            </form>
+        </div>
+        {% for post in allPosts %}
+        <div class="element-control">
+            <a href="{% url 'profil' post.username %}">
+                <b>
+                    <i class="fas fa-user-circle"></i>
+                    {% if post.first_name|length == 0 %}
+                    {{ post.username }}
+                    {% else %}
+                    {{ post.first_name }}
+                    {% endif %}
+                </b>
+            </a>
+            <span>@{{ post.username }} &#183; 45m</span>
+            <br><br>
+            {% if request.user.id == post.username.id and user.is_authenticated %}
+            <a href="#">Edit</a>
+            <br>
+            {% endif %}
+            {{ post.text }}
+            <br>
+            <span>{{ post.timestamp }}
+            </span>
+            <br>
+            <span><i class="fas fa-heart" style="color:red;"></i> 0</span>
+            <br>
+            <span>Comment</span>
+        </div>
+        {% endfor %}
     </div>
-    {% for post in allposts %}
-    <div class="element-control">
-        <b>{{ user.username }}</b>
-        <br><br>
-        <a href="#">Edit</a>
-        <br>
-        {{ post.text }}
-        <br>
-        <span>{{ post.timestamp }}
-        </span>
-        <br>
-        <span>&#10084;&#65039;0</span>
-        <br>
-        <span>Comment</span>
-    </div>
-    {% endfor %}
 </div>
 {% endblock %}

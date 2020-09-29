@@ -4,7 +4,8 @@ from django import forms
 
 
 class User(AbstractUser):
-    pass
+    following = models.TextField(default="")
+    follower = models.TextField(default="")
 
 
 class NewPost(forms.Form):
