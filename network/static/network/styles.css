@@ -5,6 +5,11 @@ h1, h2, h3, h4, h5, h6{
     padding:10px 20px;
     border: 1px solid #ced4da;
     border-radius: 10px;
+    margin-bottom:15px;
+}
+
+.element-control span{
+    color: #7e7e7e;
 }
 
 .btn{

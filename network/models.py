@@ -16,6 +16,7 @@ class Post(models.Model):
     text = models.CharField(max_length=280)
     username = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="postBy")
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"User: {self.username} postet: {self.text}"

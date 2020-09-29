@@ -14,8 +14,10 @@ def index(request):
                        username=User.objects.get(username=request.POST["user"]))
         newPost.save()
 
+    allPosts = Post.objects.all()
     return render(request, "network/index.html", {
-        "newPostForm": NewPost
+        "newPostForm": NewPost,
+        "allposts": allPosts
     })
 
 

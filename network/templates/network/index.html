@@ -13,5 +13,21 @@
             </div>
         </form>
     </div>
+    {% for post in allposts %}
+    <div class="element-control">
+        <b>{{ user.username }}</b>
+        <br><br>
+        <a href="#">Edit</a>
+        <br>
+        {{ post.text }}
+        <br>
+        <span>{{ post.timestamp }}
+        </span>
+        <br>
+        <span>&#10084;&#65039;0</span>
+        <br>
+        <span>Comment</span>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}
