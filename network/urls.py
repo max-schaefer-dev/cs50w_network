@@ -8,5 +8,8 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path("<username>", views.profil, name="profil")
+
+    # APIs
+    path("<username>", views.profil, name="profil"),
+    path("feed/<str:feed_view>", views.feed, name="feed")
 ]

@@ -21,3 +21,11 @@ class Post(models.Model):
 
     def __str__(self):
         return f"User: {self.username} postet: {self.text}"
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username.username,
+            "text": self.text,
+            "timestamp": self.timestamp.strftime("%Y-%d-%m, %H:%M:%S")
+        }

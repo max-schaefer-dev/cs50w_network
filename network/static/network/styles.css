@@ -12,6 +12,13 @@ h1, h2, h3, h4, h5, h6{
     color: #7e7e7e;
 }
 
+.element-control .fas{
+    margin-right:5px;
+}
+.fa-heart{
+    color: red;
+}
+
 .btn{
     line-height:initial;
     margin-top:10px;
@@ -58,7 +65,4 @@ form label{
 }
 #profil{
     margin-bottom:20px;
-}
-
-.allposts{
 }
