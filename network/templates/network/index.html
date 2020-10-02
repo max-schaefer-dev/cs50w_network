@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 <main id="main">
@@ -14,10 +15,14 @@
                 </div>
             </form>
         </div>
-        <div id="allposts">
+        <div id="posts">
         </div>
         <div id="profil">
         </div>
     </div>
 </main>
+{% endblock %}
+
+{% block script %}
+<script type="text/babel" src="{% static 'network/main.js' %}"></script>
 {% endblock %}

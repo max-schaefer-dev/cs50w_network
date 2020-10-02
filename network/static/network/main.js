@@ -105,4 +105,4 @@ let Post = (props) => {
     );
 };
 
-ReactDOM.render(<App />, document.querySelector('#allposts'));
+ReactDOM.render(<App />, document.querySelector('#posts'));

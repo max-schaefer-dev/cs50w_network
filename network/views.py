@@ -14,7 +14,6 @@ from .models import User, NewPost, Post
 def index(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        print(data)
         postContent = data["text"]
         username = request.user
 
@@ -82,8 +81,6 @@ def register(request):
 
 
 def feed(request, feed_view):
-    print(request.user)
-
     if feed_view == "allposts":
         posts = Post.objects.all()
 
@@ -91,8 +88,15 @@ def feed(request, feed_view):
         getUser = User.objects.get(username=request.user)
         # getFollowingIDs = User.objects.
         # createFollowingList = getUser.following[:-1]
-        feed = Post.objects.filter(username__in=(getUser.following[:-1]))
-        print(getFollowingList)
+        #feed = Post.objects.filter(username__in=(getUser.following[:-1]))
+        # print(getFollowingList)
+
+    if feed_view == "profil":
+        data = json.loads(request.body)
+        username = data["username"]
+        user = User.objects.get(username=username)
+        posts = Post.objects.all().filter(username=user.id)
+        # .order_by('-timestamp')
 
         # posts = Post.objects.filter()
     posts = posts.order_by("-timestamp").all()
@@ -101,19 +105,56 @@ def feed(request, feed_view):
 
 def profil(request, username):
     if request.method == "POST":
-        if request.POST["action"] == "Follow" or request.POST["action"] == "Unfollow":
-            user = User.objects.get(username=request.POST["user"])
-            getFollower = str(user.follower)
-            # print(getFollowing)
+        data = json.loads(request.body)
+        action = data["action"]
+        username = data["username"]
+        print("a:", action, "u:", username)
 
-            if request.POST["action"] == "Follow":
-                updatedFollower = getFollower + \
-                    str(request.POST["follower"]) + ","
-                # getFollowing.append(request.POST["follower"])
+        if action == "getProfil":
+            user = User.objects.get(username=username)
+
+            # Get follower and following count
+            if user.follower == "":
+                followerCount = 0
             else:
-                # getFollowing.remove(request.POST["follower"])
+                followerCount = len((user.follower)[:-1].split(','))
+
+            if user.following == "":
+                followingCount = 0
+            else:
+                followingCount = len((user.following)[:-1].split(','))
+
+            # Check if already following
+            if str(request.user) in (user.follower).split(','):
+                alreadyFollowing = "true"
+            else:
+                alreadyFollowing = "false"
+
+            # Check if user is seeing his own profile
+            if str(request.user) == str(username):
+                ownProfil = "true"
+            else:
+                ownProfil = "false"
+
+            print(ownProfil)
+
+            return JsonResponse({
+                "name": str(user.first_name) + " " + str(user.last_name),
+                "alreadyFollowing": alreadyFollowing,
+                "followerCount": followerCount,
+                "followingCount": followingCount,
+                "ownProfil": ownProfil
+            })
+
+        if action == "follow" or action == "unfollow":
+            user = User.objects.get(username=username)
+            getFollower = str(user.follower)
+
+            if action == "follow":
+                updatedFollower = getFollower + str(request.user) + ","
+            else:
                 getFollower = getFollower.split(',')
-                getFollower.remove(str(request.POST["follower"]))
+                getFollower.remove(str(request.user))
                 updatedFollower = str(getFollower).translate(str.maketrans(
                     {"'": "", "[": "", "]": "", " ": ""}))
 
@@ -121,7 +162,6 @@ def profil(request, username):
                 print(str(getFollower).translate(str.maketrans(
                     {"'": "", "[": "", "]": "", " ": ""})))
 
-            # user.following = str(getFollowing).strip('][')
             user.follower = updatedFollower
             user.save()
 
@@ -136,15 +176,6 @@ def profil(request, username):
     else:
         followingCount = len((user.following)[:-1].split(','))
 
-    userPosts = Post.objects.all().filter(username=user.id).order_by('-timestamp')
-    # t = (User.objects.get(username="tom").following).split(',')
-    # test = Post.objects.filter(username__in=(2, 1))
-    # print(tt)
-    # print(str(tt).translate(str.maketrans(
-    #    {"'": "", "[": "", "]": "", " ": ""})))
-    # print((user.follower).split(','))
-    # print(user.follower.replace("max", ""))
-
     # Check if already following
     if str(request.user) in (user.follower).split(','):
         alreadyFollowing = True
@@ -153,7 +184,6 @@ def profil(request, username):
 
     return render(request, "network/profil.html", {
         "user": user,
-        "userPosts": userPosts,
         "alreadyFollowing": alreadyFollowing,
         "followerCount": followerCount,
         "followingCount": followingCount
