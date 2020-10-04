@@ -119,11 +119,18 @@ class App extends React.Component {
         return (
             <div>
                 <div id="profil">
-                    <Profil username={this.state.username} ownProfil={this.state.ownProfil} alreadyFollowing={this.state.alreadyFollowing} name={this.state.name} followingCount={this.state.followingCount} followerCount={this.state.followerCount} />
+                    <Profil
+                        username={this.state.username}
+                        ownProfil={this.state.ownProfil}
+                        alreadyFollowing={this.state.alreadyFollowing}
+                        name={this.state.name}
+                        followingCount={this.state.followingCount}
+                        followerCount={this.state.followerCount}
+                    />
                 </div>
                 <div id="posts">
                     {this.state.posts.map(post =>
-                        <Post key={post["id"]} username={post["username"]} text={post["text"]} timestamp={post["timestamp"]} />
+                        <Post key={post["id"]} likes={post["likes"]} comments={post["comments"]} username={post["username"]} text={post["text"]} timestamp={post["timestamp"]} />
                     )}
                 </div>
             </div>
@@ -163,8 +170,8 @@ let Post = (props) => {
         <div className="element-control">
             <a href={props.username}>
                 <b>
-                    <i className="fas fa-user-circle"></i>
-                    {props.username}
+                    <i style={{ marginRight: 10 }} className="fas fa-user-circle"></i>
+                    <div style={{ marginRight: 10, width: "max-content", display: "inline-block" }}>{props.username}</div>
                 </b>
             </a>
             <span>@{props.username} &#183; 45m</span>
@@ -177,10 +184,17 @@ let Post = (props) => {
                 {props.timestamp}
             </span>
             <br />
-            <span><i className="fas fa-heart"></i> 0</span>
-            <br />
-            <span>Comment</span>
-        </div>
+            <div className="icon-control">
+                <div id="comments">
+                    <div><i id="commentIcon" className="far fa-comment-alt"></i></div>
+                    <div id="commentCount" style={{ width: "max-content", display: "inline-block", paddingBottom: 3 }}>{props.comments}</div>
+                </div>
+                <div id="likes">
+                    <div><i id="likeIcon" className="far fa-heart"></i></div>
+                    <div id="likeCount" style={{ width: "max-content", display: "inline-block", paddingBottom: 3 }}>{props.likes}</div>
+                </div>
+            </div>
+        </div >
     );
 };
 

@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
-from .models import User, NewPost, Post
+from .models import User, NewPost, Post, Likes, Comments
 
 
 # @csrf_exempt
@@ -83,6 +83,26 @@ def register(request):
 def feed(request, feed_view):
     if feed_view == "allposts":
         posts = Post.objects.all()
+        lst = []
+
+        # Check if current user already liked the post
+        for post in posts:
+            if post.likes > 0:
+                likedEntry = Likes.objects.get(post=post.id)
+                # Check if already liked
+                if str(request.user) in (likedEntry.who_liked).split(','):
+                    alreadyLiked = True
+                    print("TRIGGERED AT:", post)
+
+                else:
+                    alreadyLiked = False
+
+                print(likedEntry.who_liked)
+
+            else:
+                alreadyLiked = False
+
+            lst.insert(0, post.serialize(alreadyLiked))
 
     if feed_view == "followingposts":
         getUser = User.objects.get(username=request.user)
@@ -96,11 +116,10 @@ def feed(request, feed_view):
         username = data["username"]
         user = User.objects.get(username=username)
         posts = Post.objects.all().filter(username=user.id)
-        # .order_by('-timestamp')
 
-        # posts = Post.objects.filter()
+    alreadyLiked = False
     posts = posts.order_by("-timestamp").all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    return JsonResponse(lst, safe=False)
 
 
 def profil(request, username):
@@ -188,3 +207,60 @@ def profil(request, username):
         "followerCount": followerCount,
         "followingCount": followingCount
     })
+
+
+def post_action(request, post_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        print("DATA:", data)
+        action = data["action"]
+        username = request.user
+        post = Post.objects.get(id=post_id)
+
+        if action == "like" or action == "unlike":
+            # Update likes counter
+            if action == "like":
+                updatedLikes = post.likes + 1
+
+                # Try to get the row with the likes likes
+                try:
+                    getLikeColumn = Likes.objects.get(
+                        post=Post.objects.get(id=post_id))
+                    updatedColumn = str(
+                        getLikeColumn.who_liked) + str(username) + ","
+                    getLikeColumn.who_liked = updatedColumn
+                    getLikeColumn.save()
+
+                except:
+                    updatedColumn = Likes(post=Post.objects.get(
+                        id=post.id), who_liked=(str(username) + ','))
+                    updatedColumn.save()
+
+                print("getLikeTableColumn: SUCCESS")
+            else:
+                updatedLikes = post.likes - 1
+                getlikeColumn = Likes.objects.get(
+                    post=Post.objects.get(id=post_id))
+                print("getLikeTableColumn: FAILED")
+
+                getLiker = str(getlikeColumn.who_liked)
+                getLiker = getLiker.split(',')
+                getLiker.remove(str(username))
+                updatedColumn = str(getLiker).translate(str.maketrans(
+                    {"'": "", "[": "", "]": "", " ": ""}))
+
+                getlikeColumn.who_liked = updatedColumn
+                getlikeColumn.save()
+
+            post.likes = updatedLikes
+            post.save()
+
+        if action == "comment":
+            pass
+
+        if action == "edit":
+            pass
+
+        return JsonResponse({
+            "status": "success"
+        })

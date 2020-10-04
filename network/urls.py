@@ -11,5 +11,6 @@ urlpatterns = [
 
     # APIs
     path("<username>", views.profil, name="profil"),
-    path("feed/<str:feed_view>", views.feed, name="feed")
+    path("feed/<str:feed_view>", views.feed, name="feed"),
+    path("post/<int:post_id>", views.post_action, name="post_action")
 ]

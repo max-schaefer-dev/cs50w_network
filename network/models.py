@@ -18,14 +18,39 @@ class Post(models.Model):
     username = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="postBy")
     timestamp = models.DateTimeField(auto_now_add=True)
+    likes = models.IntegerField(default=0)
+    comments = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"User: {self.username} postet: {self.text}"
+        return f"User: {self.username}, Post: {self.text}"
 
-    def serialize(self):
+    def serialize(self, alreadyLiked):
         return {
             "id": self.id,
             "username": self.username.username,
             "text": self.text,
+            "likes": self.likes,
+            "comments": self.comments,
+            "alreadyLiked": alreadyLiked,
             "timestamp": self.timestamp.strftime("%Y-%d-%m, %H:%M:%S")
         }
+
+
+class Likes(models.Model):
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="postLikedBy")
+    who_liked = models.TextField(default="")
+
+    def __str__(self):
+        return f"Post: {self.post}, Likers: {self.who_liked}"
+
+
+class Comments(models.Model):
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="postCommentedBy")
+    comments = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="postComments")
+    who_commented = models.TextField(default="")
+
+    def __str__(self):
+        return f"Post: {self.post}, Comments: {self.comments}, Commentators: {self.who_commented}"
