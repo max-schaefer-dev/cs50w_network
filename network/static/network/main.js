@@ -4,13 +4,28 @@ class App extends React.Component {
 
         this.state = {
             posts: [],
-            feedView: "allposts",
+            userLoggedIn: false,
+            feedView: document.querySelector('#page-title').getAttribute(['data-title']),
             csrftoken: this.getCookie('csrftoken')
         };
         this.handleSubmit = this.handleSubmit.bind(this)
         this.getCookie = this.getCookie.bind(this)
-        this.like = this.like.bind(this)
     }
+
+    componentDidMount() {
+        fetch(`/feed/${this.state.feedView}`)
+            .then(response => response.json())
+            .then(result => {
+                console.log(result)
+                this.setState({
+                    posts: result["posts"],
+                    userLoggedIn: result["userLoggedIn"]
+                });
+            })
+
+        this.state.userLoggedIn && document.querySelector('#submitPost').addEventListener('click', () => this.handleSubmit());
+    }
+
     handleSubmit() {
         let postInput = document.querySelector('#postInput');
         fetch('',
@@ -42,24 +57,6 @@ class App extends React.Component {
             , 1500);
     }
 
-    componentDidMount() {
-        fetch(`/feed/${this.state.feedView}`)
-            .then(response => response.json())
-            .then(result => {
-                this.setState({ posts: result });
-            })
-
-        document.querySelector('#submitPost').addEventListener('click', () => this.handleSubmit());
-    }
-
-    like(post_id) {
-        let post = document.querySelector(`div[data - id= "${post_id}"]`);
-
-        //likeRow.querySelector(':scope > div > i').className = "fas fa-heart"
-        document.querySelector('.likes').className = "likes active"
-        document.querySelector('.likeCount').innerHTML = parseInt(document.querySelector('.likeCount').innerHTML) + 1
-        //let likeIcon = document.querySelector('#likeIcon').className = "far fa-comment-alt"
-    }
 
     comment() {
         let likeRow = document.querySelector('.likes');
@@ -85,7 +82,6 @@ class App extends React.Component {
     }
 
     render() {
-        console.log(this.state.posts)
         return (
             <div>
                 {this.state.posts.map(post =>
@@ -93,6 +89,7 @@ class App extends React.Component {
                         key={post["id"]}
                         id={post["id"]}
                         data-al={post["alreadyLiked"]}
+                        data-oP={post["ownPost"]}
                         username={post["username"]}
                         text={post["text"]}
                         likes={post["likes"]}
@@ -118,6 +115,7 @@ class Post extends React.Component {
             timestamp: props.timestamp,
             comments: props.comments,
             likes: props.likes,
+            ownPost: props["data-oP"],
             csrftoken: props.getCookie('csrftoken')
         }
     }
@@ -172,7 +170,7 @@ class Post extends React.Component {
                 </a>
                 <span>@{this.state.username} &#183; 45m</span>
                 <br /><br />
-                <a href="#">Edit</a>
+                { this.state.ownPost && <a href="#">Edit</a>}
                 <br />
                 { this.state.text}
                 <br />

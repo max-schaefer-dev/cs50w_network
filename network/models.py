@@ -4,7 +4,14 @@ from django import forms
 
 
 class User(AbstractUser):
-    following = models.TextField(default="")
+    followingList = models.TextField(default="")
+    followingCount = models.IntegerField(default=0)
+    followerCount = models.IntegerField(default=0)
+
+
+class Followings(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="followedUser")
     follower = models.TextField(default="")
 
 
@@ -24,7 +31,7 @@ class Post(models.Model):
     def __str__(self):
         return f"User: {self.username}, Post: {self.text}"
 
-    def serialize(self, alreadyLiked):
+    def serialize(self, alreadyLiked, ownPost):
         return {
             "id": self.id,
             "username": self.username.username,
@@ -32,6 +39,7 @@ class Post(models.Model):
             "likes": self.likes,
             "comments": self.comments,
             "alreadyLiked": alreadyLiked,
+            "ownPost": ownPost,
             "timestamp": self.timestamp.strftime("%Y-%d-%m, %H:%M:%S")
         }
 

@@ -4,7 +4,9 @@
 {% block body %}
 <main id="main">
     <div class="container">
-        <h1>All Posts</h1>
+        {% if pageTitle == "allposts" %}
+        <h1 id="page-title" data-title="allposts">All Posts</h1>
+        {% if user.is_authenticated %}
         <div class="element-control">
             <form id="postForm">
                 <div className="form-group">
@@ -15,6 +17,10 @@
                 </div>
             </form>
         </div>
+        {% endif %}
+        {% elif pageTitle == "following"%}
+        <h1 id="page-title" data-title="following">Following</h1>
+        {% endif %}
         <div id="posts">
         </div>
         <div id="profil">
