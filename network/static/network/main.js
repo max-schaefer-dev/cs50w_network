@@ -1,3 +1,37 @@
+class Form extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            textfield: '',
+            charCount: 0
+        }
+    }
+    render() {
+        return (
+            <form>
+                <div className="form-group">
+                    <label>New Post</label>
+                    <textarea id="postInput" className="form-control" rows="2" maxLength="280"
+                        placeholder="What´s happening?"></textarea>
+                    <div id="sL">
+                        <div id="charCountControl">
+                            <span id="charCount">{this.state.charCount}</span>
+                            <span id="charMax"> / 280</span>
+                        </div>
+                        <div>
+                            <button type="button" id="submitPost" className="btn btn-primary"
+                                disabled="disabled">Post</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        )
+    }
+};
+
+ReactDOM.render(<Form />, document.querySelector('#postForm'));
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -18,7 +52,6 @@ class App extends React.Component {
             fetch(`/feed/${this.state.view}`)
                 .then(response => response.json())
                 .then(result => {
-                    console.log(result)
                     this.setState({
                         posts: result["posts"],
                         userLoggedIn: result["userLoggedIn"]
@@ -32,7 +65,7 @@ class App extends React.Component {
                     'X-CSRFToken': this.state.csrftoken
                 },
                 body: JSON.stringify({
-                    username: document.querySelector('#page-title').innerHTML
+                    username: document.getElementById('page-title').innerHTML
                 })
             })
                 .then(response => response.json())
@@ -40,17 +73,32 @@ class App extends React.Component {
                     this.setState({ posts: result["posts"] });
                 })
 
-            if (this.state.view == "profil") {
-                setTimeout(() => {
-                    if (document.querySelector('#profilName').getAttribute(['data-op']) === "0") {
-                        document.querySelector(`#followBtn`).addEventListener('click', () => this.follow(document.querySelector('#followBtn').value));
-                    }
-                    return false;
-                }, 600)
-            }
         }
 
-        this.state.userLoggedIn && document.querySelector('#submitPost').addEventListener('click', () => this.handleSubmit());
+        setTimeout(() => {
+            if (this.state.view == "profil") {
+                if (document.getElementById('profilName').getAttribute(['data-op']) === "0") {
+                    document.getElementById(`followBtn`).addEventListener('click', () => this.follow(document.getElementById('followBtn').value));
+                }
+            }
+            if (this.state.view == "allposts") {
+                if (this.state.userLoggedIn) {
+                    document.getElementById('submitPost').addEventListener('click', () => this.handleSubmit());
+                    let postInput = document.getElementById('postInput')
+                    postInput.addEventListener('keyup', () => {
+                        if (postInput.value.length > 0) {
+                            document.getElementById('charCountControl').classList.add('vis')
+                            document.getElementById('submitPost').removeAttribute('disabled');
+                        }
+                        else {
+                            document.getElementById('charCountControl').classList.remove('vis')
+                            document.getElementById('submitPost').setAttribute('disabled', 'disabled');
+                        }
+                    })
+                }
+            }
+            return false;
+        }, 800)
     }
 
     handleSubmit() {
@@ -70,7 +118,6 @@ class App extends React.Component {
             })
             .then(response => response.json())
             .then(result => {
-                console.log("result:", result)
             });
         postInput.value = ""
 
@@ -79,7 +126,7 @@ class App extends React.Component {
             fetch(`/feed/${this.state.view}`)
                 .then(response => response.json())
                 .then(result => {
-                    this.setState({ posts: result });
+                    this.setState({ posts: result["posts"] });
                 })
             , 500);
     }
@@ -236,7 +283,6 @@ class Post extends React.Component {
                 })
                 .then(response => response.json())
                 .then(result => {
-                    console.log("result:", result)
                 });
         })
     }

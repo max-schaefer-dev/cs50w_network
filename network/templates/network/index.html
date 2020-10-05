@@ -6,7 +6,7 @@
     <div>
         <h1 id="page-title">{{ pageTitle }}</h1>
         {% if view == "profil" %}
-        <div class="element-control">
+        <div id="profil" class="element-control">
             {% if name == ' ' %}
             <h2 id="profilName" data-op={{ ownProfil }} data-af={{ alreadyFollowing }}>{{ pageTitle }}</h2>
             {% else %}
@@ -31,22 +31,25 @@
         {% endif %}
         {% if view == "allposts" %}
         {% if user.is_authenticated %}
-        <div class="element-control">
-            <form id="postForm">
-                <div className="form-group">
+        <div id="postForm" class="element-control">
+            <form>
+                <div class="form-group">
                     <label>New Post</label>
-                    <textarea id="postInput" class="form-control" rows="2" max_length="280"
+                    <textarea id="postInput" class="form-control" rows="2" maxlength="280"
                         placeholder="What´s happening?"></textarea>
-                    <div style="height:56px;">
-                        <button type="button" id="submitPost" class="btn btn-primary">Post</button>
+                    <div id="sL">
+                        <div>
+                            <button type="button" id="submitPost" class="btn btn-primary"
+                                disabled="disabled">Post</button>
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
         {% endif %}
         {% endif %}
-    </div>
-    <div id="content">
+        <div id="content">
+        </div>
     </div>
 </main>
 {% endblock %}

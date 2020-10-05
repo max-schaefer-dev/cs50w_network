@@ -41,15 +41,18 @@ body{
     border: 1px solid #ced4da;
     border-radius: 10px;
     margin-bottom:15px;
+    animation-name:new_post;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    overflow: hidden;
 }
 
 .element-control span{
     color: #7e7e7e;
 }
-
-.btn{
-    line-height:initial;
-    margin-top:10px;
+#postForm, #profil{
+    animation-name: initial;
+    animation-duration:initial;
 }
 
 /* NAVBAR */
@@ -93,7 +96,30 @@ nav{
 form label{
     font-weight: 700;
 }
-#submitPost, #followBtn{
+#sL{
+    display:flex;
+    height:56px;
+    align-items: center;
+    align-content: center;
+    flex-direction:row;
+    justify-content: flex-end;
+}
+#sL > div:last-child{
+    display:inline-block;
+}
+#charCountControl{
+    display:none;
+    margin-right:10px;
+}
+.vis{
+    display:inline-block!important;
+}
+#submitPost{
+    line-height: 1;
+    padding: 10px 15px;
+    cursor:initial;
+}
+#followBtn{
     float:right;
 }
 #profil{
@@ -107,7 +133,11 @@ form label{
     margin-top:10px;
 }
 .post-content{
+    position: relative;
     width: 100%;
+    animation-name: new_post_content;
+    animation-duration:1s;
+    animation-timing-function: ease-out;
 }
 .fa-user-circle{
     font-size: 2.2rem;
@@ -176,4 +206,26 @@ form label{
 }
 #editBtn:hover i{
     background-color:rgb(107, 107, 107, 0.2);
+}
+
+/* Animation */
+@keyframes new_post {
+    0% {
+        opacity: 0;
+        height: 0px;
+    }
+    100% {
+        opacity: 1;
+        height:165px;
+    }
+}
+@keyframes new_post_content {
+    0% {
+        top: -100px;
+        opacity: 0;
+    }
+    100% {
+        top: 0px;
+        opacity: 1;
+    }
 }
