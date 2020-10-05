@@ -5,23 +5,50 @@ class App extends React.Component {
         this.state = {
             posts: [],
             userLoggedIn: false,
-            feedView: document.querySelector('#page-title').getAttribute(['data-title']),
+            view: document.querySelector('#main').getAttribute(['data-vw']),
             csrftoken: this.getCookie('csrftoken')
         };
         this.handleSubmit = this.handleSubmit.bind(this)
         this.getCookie = this.getCookie.bind(this)
+        this.follow = this.follow.bind(this)
     }
 
     componentDidMount() {
-        fetch(`/feed/${this.state.feedView}`)
-            .then(response => response.json())
-            .then(result => {
-                console.log(result)
-                this.setState({
-                    posts: result["posts"],
-                    userLoggedIn: result["userLoggedIn"]
-                });
+        if (this.state.view == "allposts") {
+            fetch(`/feed/${this.state.view}`)
+                .then(response => response.json())
+                .then(result => {
+                    console.log(result)
+                    this.setState({
+                        posts: result["posts"],
+                        userLoggedIn: result["userLoggedIn"]
+                    });
+                })
+        } else {
+            fetch(`/feed/${this.state.view}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.state.csrftoken
+                },
+                body: JSON.stringify({
+                    username: document.querySelector('#page-title').innerHTML
+                })
             })
+                .then(response => response.json())
+                .then(result => {
+                    this.setState({ posts: result["posts"] });
+                })
+
+            if (this.state.view == "profil") {
+                setTimeout(() => {
+                    if (document.querySelector('#profilName').getAttribute(['data-op']) === "0") {
+                        document.querySelector(`#followBtn`).addEventListener('click', () => this.follow(document.querySelector('#followBtn').value));
+                    }
+                    return false;
+                }, 600)
+            }
+        }
 
         this.state.userLoggedIn && document.querySelector('#submitPost').addEventListener('click', () => this.handleSubmit());
     }
@@ -49,12 +76,39 @@ class App extends React.Component {
 
         // Fetching updated list with all posts
         setTimeout(
-            fetch(`/feed/${this.state.feedView}`)
+            fetch(`/feed/${this.state.view}`)
                 .then(response => response.json())
                 .then(result => {
                     this.setState({ posts: result });
                 })
-            , 1500);
+            , 500);
+    }
+
+    follow(action) {
+        // Update Followercount
+        if (action === "follow") {
+            document.querySelector('#followBtn').setAttribute(['value'], 'unfollow');
+            document.querySelector('#followBtn').innerHTML = 'Unfollow';
+            document.querySelector('#followerCount').innerHTML = parseInt(document.querySelector('#followerCount').innerHTML) + 1
+
+        } else {
+            document.querySelector('#followBtn').setAttribute(['value'], 'follow');
+            document.querySelector('#followBtn').innerHTML = 'Follow';
+            document.querySelector('#followerCount').innerHTML = parseInt(document.querySelector('#followerCount').innerHTML) - 1
+        }
+
+        let userName = document.querySelector('#profilName').innerHTML
+        fetch(`/${userName}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': this.state.csrftoken
+            },
+            body: JSON.stringify({
+                action: action,
+                username: userName
+            })
+        })
     }
 
 
@@ -63,7 +117,6 @@ class App extends React.Component {
         likeRow.querySelector(':scope > div > i').className = "fas fa-heart"
         document.querySelector('.likes').className = "likes active"
         document.querySelector('.likeCount').innerHTML = parseInt(document.querySelector('.likeCount').innerHTML) + 1
-        //let likeIcon = document.querySelector('#likeIcon').className = "far fa-comment-alt"
     }
 
     getCookie(name) {
@@ -84,23 +137,51 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                {this.state.posts.map(post =>
-                    <Post
-                        key={post["id"]}
-                        id={post["id"]}
-                        data-al={post["alreadyLiked"]}
-                        data-oP={post["ownPost"]}
-                        username={post["username"]}
-                        text={post["text"]}
-                        likes={post["likes"]}
-                        comments={post["comments"]}
-                        timestamp={post["timestamp"]}
-                        getCookie={this.getCookie}
-                    />
-                )}
+                <div id="posts">
+                    {this.state.posts.map(post =>
+                        <Post
+                            key={post["id"]}
+                            id={post["id"]}
+                            data-al={post["alreadyLiked"]}
+                            data-oP={post["ownPost"]}
+                            username={post["username"]}
+                            text={post["text"]}
+                            likes={post["likes"]}
+                            comments={post["comments"]}
+                            timestamp={post["timestamp"]}
+                            getCookie={this.getCookie}
+                        />
+                    )}
+                </div>
             </div>
         );
     }
+}
+
+let Profil = (props) => {
+    let button = "false"
+    if (props.ownProfil === "false") {
+        if (props.alreadyFollowing === "false") {
+            button = <button id="followBtn" className="btn btn-primary" value="follow">Follow</button>
+        } else {
+            button = <button id="followBtn" className="btn btn-primary" value="unfollow">Unfollow</button>
+        }
+    } else {
+        button = "false"
+    }
+
+    return (
+        <div>
+            <h2>{props.name == ' ' ? props.username : props.name}</h2>
+            <span style={{ color: "lightgrey" }}>@{props.username}</span>
+            <br />
+            <div id="profilCounter">
+                <span style={{ marginRight: 10 }}><b id="followingCount">{props.followingCount}</b> Following</span>
+                <span><b id="followerCount">{props.followerCount}</b> Followers</span>
+            </div>
+            {button != "false" && button}
+        </div>
+    )
 }
 
 class Post extends React.Component {
@@ -115,6 +196,7 @@ class Post extends React.Component {
             timestamp: props.timestamp,
             comments: props.comments,
             likes: props.likes,
+            retweets: 0,
             ownPost: props["data-oP"],
             csrftoken: props.getCookie('csrftoken')
         }
@@ -161,31 +243,40 @@ class Post extends React.Component {
 
     render() {
         return (
-            <div data-id={this.state.id} data-al={this.state.alreadyLiked} className="element-control">
-                <a href={this.state.username}>
-                    <b>
+            <div data-id={this.state.id} data-al={this.state.alreadyLiked} style={{ display: "flex" }} className="element-control">
+                <div>
+                    <a href={this.state.username}>
                         <i style={{ marginRight: 10 }} className="fas fa-user-circle"></i>
-                        <div style={{ marginRight: 10, width: "max-content", display: "inline-block" }}>{this.state.username}</div>
-                    </b>
-                </a>
-                <span>@{this.state.username} &#183; 45m</span>
-                <br /><br />
-                { this.state.ownPost && <a href="#">Edit</a>}
-                <br />
-                { this.state.text}
-                <br />
-                <span>
-                    {this.state.timestamp}
-                </span>
-                <br />
-                <div className="icon-control">
-                    <div className="comments">
-                        <div><i className="far fa-comment-alt"></i></div>
-                        <div className="commentCount" style={{ width: "max-content", display: "inline-block", paddingBottom: 3 }}>{this.state.comments}</div>
-                    </div>
-                    <div className={this.state.alreadyLiked ? "likes active" : "likes"}>
-                        <div><i className={this.state.alreadyLiked ? "fas fa-heart" : "far fa-heart"}></i></div>
-                        <div className="likeCount" style={{ width: "max-content", display: "inline-block", paddingBottom: 3 }}>{this.state.likes}</div>
+                    </a>
+                </div>
+                <div className="post-content">
+                    <a href={this.state.username}>
+                        <b>
+                            <div style={{ marginRight: 10, width: "max-content", display: "inline-block" }}>{this.state.username}</div>
+                        </b>
+                    </a>
+                    <span>@{this.state.username} &#183; 45m</span>
+                    {this.state.ownPost && <div id="editBtn"><i className="fas fa-edit"></i></div>}
+                    <br /><br />
+                    {this.state.text}
+                    <br />
+                    <span>
+                        {this.state.timestamp}
+                    </span>
+                    <br />
+                    <div className="icon-control">
+                        <div className="comments">
+                            <div><i className="far fa-comment-alt"></i></div>
+                            <div className="commentCount" style={{ width: "max-content", display: "inline-block", paddingBottom: 3 }}>{this.state.comments}</div>
+                        </div>
+                        <div className="retweets">
+                            <div><i className="fas fa-retweet"></i></div>
+                            <div className="retweetCount" style={{ width: "max-content", display: "inline-block", paddingBottom: 3 }}>{this.state.retweets}</div>
+                        </div>
+                        <div className={this.state.alreadyLiked ? "likes active" : "likes"}>
+                            <div><i className={this.state.alreadyLiked ? "fas fa-heart" : "far fa-heart"}></i></div>
+                            <div className="likeCount" style={{ width: "max-content", display: "inline-block", paddingBottom: 3 }}>{this.state.likes}</div>
+                        </div>
                     </div>
                 </div>
             </div >
@@ -193,4 +284,4 @@ class Post extends React.Component {
     }
 };
 
-ReactDOM.render(<App />, document.querySelector('#posts'));
+ReactDOM.render(<App />, document.querySelector('#content'));

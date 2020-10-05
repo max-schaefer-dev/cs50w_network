@@ -1,51 +1,20 @@
 h1, h2, h3, h4, h5, h6{
     font-weight:600;
 }
-.element-control{
-    padding:10px 20px;
-    border: 1px solid #ced4da;
-    border-radius: 10px;
-    margin-bottom:15px;
+body{
+    background-color:#dae0e6;
 }
-
-.element-control span{
-    color: #7e7e7e;
+#main-wrapper{
+    max-width: 1225px;
 }
-
-
-.btn{
-    line-height:initial;
-    margin-top:10px;
+.body{
+    display: flex;
+    
 }
-
-/* NAVBAR */
-nav{
-    width: 275px;
+#main{
+    max-width:600px;
+    width:100%;
 }
-.navbar .container{
-    text-align:left;
-}
-
-.nav-link{
-    font-size:26px;
-    color: #000;
-    padding: 1rem 1rem;
-}
-
-.nav-link i{
-    width:50px;
-}
-
-.navbar-brand{
-    padding: 0 1rem 1rem 1rem;
-    font-size:26px;
-}
-
-/* FORMS */
-form label{
-    font-weight: 700;
-}
-
 #main-wrapper{
     -moz-box-direction: normal;
     -moz-box-orient: horizontal;
@@ -57,6 +26,76 @@ form label{
 .body{
     width: 100%;
 }
+#sidebar{
+    width:350px;
+}
+#sidebar section{
+    padding:10px 20px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    background-color:rgba(255, 255, 255, 0.75);
+}
+.element-control{
+    padding:10px 20px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    margin-bottom:15px;
+}
+
+.element-control span{
+    color: #7e7e7e;
+}
+
+.btn{
+    line-height:initial;
+    margin-top:10px;
+}
+
+/* NAVBAR */
+header{
+    position:relative;
+}
+nav{
+    width: 275px;
+}
+.navbar .container{
+    text-align:left;
+}
+.nav-item{
+    margin-bottom:20px;
+}
+.nav-link{
+    font-size:26px;
+    color: #000;
+    padding: 0.5rem 1rem;
+    transition-duration: 0.1s;
+    border-radius: 50px;
+}
+.nav-link:hover, #navbar-brand a:hover{
+    background-color: #0056b338;
+}
+.nav-link i{
+    width:50px;
+}
+#navbar-brand{
+    padding:0 0 10px 10px;
+}
+#navbar-brand a{
+    padding: 0 1rem 1rem 1rem;
+    font-size:26px;
+    padding: 10px;
+    border-radius:50%;
+    transition-duration: 0.1s;
+}
+
+/* FORMS */
+form label{
+    font-weight: 700;
+}
+#submitPost, #followBtn{
+    float:right;
+}
 #profil{
     margin-bottom:20px;
 }
@@ -67,14 +106,28 @@ form label{
     flex-direction:row;
     margin-top:10px;
 }
-.likes, .comments{
+.post-content{
+    width: 100%;
+}
+.fa-user-circle{
+    font-size: 2.2rem;
+}
+#editBtn{
+    float:right;
+}
+#editBtn i{
+    padding: 10px;
+    border-radius:50%;
+}
+.likes, .comments, .retweets{
     width: max-content;
     display:flex;
     flex-direction:row;
     align-items: center;
 }
-.likes, .comments{
+.likes, .comments, .retweets, #editBtn{
     color: #7e7e7e;
+    transition-duration: 0.1s;
 }
 .likes.active{
     color: #ff2d2d!important;
@@ -82,17 +135,29 @@ form label{
 .comments.active{
     color:#2d6fff!important;
 }
-.comments{
+.comments, .retweets{
     margin-right:30px;
 }
-.likes i, .comments i{
+.likes i, .comments i, .retweets i, #editBtn i{
     margin-right:5px;
     padding: 10px;
     border-radius:50%;
+    transition-duration: 0.1s;
 }
-.comments:hover, .likes:hover{
+#editBtn i{
+    padding: 10px;
+}
+.retweets i{
+    padding: 10px 8px;
+}
+.comments:hover, .likes:hover, .retweets:hover, #editBtn:hover{
     cursor: pointer;
-    transition-duration: 0.2s;
+}
+.retweets:hover{
+    color:rgb(0, 128, 0);
+}
+#editBtn:hover{
+    color:rgb(107, 107, 107);
 }
 .comments:hover{
     color:rgb(45, 111, 255);
@@ -100,12 +165,15 @@ form label{
 .likes:hover{
     color: rgb(255, 45, 45);
 }
-.likes:hover, .comments:hover  > i{
-    transition-duration: 0.2s;
-}
 .likes:hover i{
     background-color: rgba(255, 45, 45, 0.5);
 }
 .comments:hover i{
     background-color:rgb(45, 111, 255, 0.5);
+}
+.retweets:hover i{
+    background-color:rgb(0, 128, 0, 0.5);
+}
+#editBtn:hover i{
+    background-color:rgb(107, 107, 107, 0.2);
 }

@@ -28,47 +28,83 @@
 <body>
     <div id="main-wrapper" class="container">
         <header>
-            <nav class="nav flex-column">
-                <a class="navbar-brand" href="{% url 'index' %}"><i class="fas fa-hippo"></i></a>
-
-                <div style="display:contents;">
-                    <ul class="nav flex-column">
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a id="showProfile" class="nav-link" href="{% url 'profil' request.user.username %}"><i
-                                    class="far fa-user-circle"></i><strong> {{ request.user.username }}</strong></a>
-                        </li>
-                        {% endif %}
-                        <li class="nav-item">
-                            <a id="allpostsBtn" class="nav-link" href="{% url 'index' %}"><i class="fab fa-buffer"></i>
-                                All Posts
+            <div style="width:275px;">
+                <nav class="nav flex-column">
+                    <div style="position:fixed;">
+                        <div id="navbar-brand">
+                            <a href="{% url 'index' %}">
+                                <i class="fas fa-hippo"></i>
                             </a>
-                        </li>
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'following' %}"><i class="fas fa-users"></i> Following</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log
-                                Out</a>
-                        </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Log In</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}"><i class="far fa-registered"></i>
-                                Register</a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </nav>
+                        </div>
+
+                        <div>
+                            <ul class="nav flex-column">
+                                {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                    <a id="showProfile" class="nav-link"
+                                        href="{% url 'profil' request.user.username %}">
+                                        <i class="far fa-user-circle"></i>
+                                        <strong>
+                                            {{ request.user.username }}
+                                        </strong>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a id="allpostsBtn" class="nav-link" href="{% url 'index' %}"><i
+                                            class="fab fa-buffer"></i>
+                                        All Posts
+                                    </a>
+                                </li>
+                                {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'following' %}"><i class="fas fa-users"></i>
+                                        Following</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>
+                                        Log
+                                        Out</a>
+                                </li>
+                                {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Log
+                                        In</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'register' %}"><i class="far fa-registered"></i>
+                                        Register</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
         </header>
 
         <div class="body">
             {% block body %}
             {% endblock %}
+            <div id="sidebar">
+                <div style="position:fixed;">
+                    <section id="popularTweets">
+                        <h2 style="font-size:20px; font-weight: 700;">Trending right now</h2>
+                        <hr>
+                        <div>
+                            <h6>Science found out that some text here</h6>
+                        </div>
+                        <hr>
+                        <div>
+                            <h6>Science found out that some text here</h6>
+                        </div>
+                        <hr>
+                        <div>
+                            <h6>Science found out that some text here</h6>
+                        </div>
+                    </section>
+                </div>
+            </div>
         </div>
     </div>
 </body>

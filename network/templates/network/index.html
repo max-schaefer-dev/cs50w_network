@@ -2,10 +2,34 @@
 {% load static %}
 
 {% block body %}
-<main id="main">
-    <div class="container">
-        {% if pageTitle == "allposts" %}
-        <h1 id="page-title" data-title="allposts">All Posts</h1>
+<main id="main" data-vw={{view}}>
+    <div>
+        <h1 id="page-title">{{ pageTitle }}</h1>
+        {% if view == "profil" %}
+        <div class="element-control">
+            {% if name == ' ' %}
+            <h2 id="profilName" data-op={{ ownProfil }} data-af={{ alreadyFollowing }}>{{ pageTitle }}</h2>
+            {% else %}
+            <h2>{{ name }}</h2>
+            {% endif %}
+            <span style="color:lightgrey;">@{{ pageTitle }}</span>
+            <br />
+            <div id="profilCounter">
+                <span style="margin-right:10px;"><b id="followingCount">{{ followingCount }}</b> Following</span>
+                <span><b id="followerCount">{{ followerCount }}</b> Followers</span>
+            </div>
+            {% if not ownProfil %}
+            <div style="height:56px;">
+                {% if not alreadyFollowing %}
+                <button id="followBtn" class="btn btn-primary" value="follow">Follow</button>
+                {% else %}
+                <button id="followBtn" class="btn btn-primary" value="unfollow">Unfollow</button>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% if view == "allposts" %}
         {% if user.is_authenticated %}
         <div class="element-control">
             <form id="postForm">
@@ -13,18 +37,16 @@
                     <label>New Post</label>
                     <textarea id="postInput" class="form-control" rows="2" max_length="280"
                         placeholder="What´s happening?"></textarea>
-                    <button type="button" id="submitPost" class="btn btn-primary">Post</button>
+                    <div style="height:56px;">
+                        <button type="button" id="submitPost" class="btn btn-primary">Post</button>
+                    </div>
                 </div>
             </form>
         </div>
         {% endif %}
-        {% elif pageTitle == "following"%}
-        <h1 id="page-title" data-title="following">Following</h1>
         {% endif %}
-        <div id="posts">
-        </div>
-        <div id="profil">
-        </div>
+    </div>
+    <div id="content">
     </div>
 </main>
 {% endblock %}

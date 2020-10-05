@@ -22,20 +22,100 @@ def index(request):
         newPost.save()
 
     allPosts = Post.objects.all().order_by('-timestamp')
-    pageTitle = "allposts"
     return render(request, "network/index.html", {
         "newPostForm": NewPost,
-        "pageTitle": pageTitle,
+        "pageTitle": "All Posts",
+        "view": "allposts",
         "allPosts": allPosts
     })
 
 
 @ensure_csrf_cookie
 def following(request):
-    pageTitle = "following"
 
     return render(request, "network/index.html", {
-        "pageTitle": pageTitle
+        "pageTitle": "following",
+        "view": "following"
+    })
+
+
+def profil(request, username):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        action = data["action"]
+        username = data["username"]
+        print("a:", action, "u:", username)
+
+        if action == "follow" or action == "unfollow":
+            user = User.objects.get(username=username)
+            follower = User.objects.get(username=request.user)
+
+            # Get table with the users followers
+            try:
+                followingTableEntry = Followings.objects.get(user=user)
+            except:
+                followingTableEntry = Followings(user=user, follower="")
+
+            followingTableList = str(followingTableEntry.follower)
+
+            if action == "follow":
+                # Update info for user who is being followed
+                user.followerCount += 1
+                updatedFollower = followingTableList + \
+                    str(request.user.id) + ","
+
+                # Update info for the user who is now following
+                updatedFollowingUser = str(
+                    follower.followingList) + str(user.id) + ","
+
+            else:
+                # Update info for user who is being followed
+                user.followerCount -= 1
+                followingTableList = followingTableList.split(',')
+                followingTableList.remove(str(request.user.id))
+                updatedFollower = str(followingTableList).translate(str.maketrans(
+                    {"'": "", "[": "", "]": "", " ": ""}))
+
+                # Update info for the user who is now following
+                updatedFollowingUser = User.objects.get(
+                    username=request.user).followingList
+                updatedFollowingUser = updatedFollowingUser.split(',')
+                updatedFollowingUser.remove(str(user.id))
+                updatedFollowingUser = str(updatedFollowingUser).translate(str.maketrans(
+                    {"'": "", "[": "", "]": "", " ": ""}))
+
+            followingTableEntry.follower = updatedFollower
+            follower.followingList = updatedFollowingUser
+
+            followingTableEntry.save()
+            follower.save()
+            user.save()
+
+    user = User.objects.get(username=username)
+
+    try:
+        getFollowings = Followings.objects.get(user=user).follower
+        if str(request.user.id) in (getFollowings).split(','):
+            alreadyFollowing = True
+        else:
+            alreadyFollowing = False
+    except:
+        alreadyFollowing = False
+
+    # Check if user is seeing his own profile
+    if str(request.user) == str(username):
+        ownProfil = 1
+    else:
+        ownProfil = 0
+
+    return render(request, "network/index.html", {
+        "pageTitle": username,
+        "view": "profil",
+        "name": str(user.first_name) + " " + str(user.last_name),
+        "alreadyFollowing": alreadyFollowing,
+        "followerCount": user.followerCount,
+        "followingCount": user.followingCount,
+        "ownProfil": ownProfil
     })
 
 
@@ -166,92 +246,10 @@ def checkIfOwnPost(loggedInUser, postCreator):
     return ownPost
 
 
-def profil(request, username):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        action = data["action"]
-        username = data["username"]
-        print("a:", action, "u:", username)
-
-        if action == "getProfil":
-            user = User.objects.get(username=username)
-
-            try:
-                getFollowings = Followings.objects.get(user=user).follower
-                if str(request.user.id) in (getFollowings).split(','):
-                    alreadyFollowing = "true"
-                else:
-                    alreadyFollowing = "false"
-            except:
-                alreadyFollowing = "false"
-
-            # Check if user is seeing his own profile
-            if str(request.user) == str(username):
-                ownProfil = "true"
-            else:
-                ownProfil = "false"
-
-            return JsonResponse({
-                "name": str(user.first_name) + " " + str(user.last_name),
-                "alreadyFollowing": alreadyFollowing,
-                "followerCount": user.followerCount,
-                "followingCount": user.followingCount,
-                "ownProfil": ownProfil
-            })
-
-        if action == "follow" or action == "unfollow":
-            user = User.objects.get(username=username)
-            follower = User.objects.get(username=request.user)
-
-            # Get table with the users followers
-            try:
-                followingTableEntry = Followings.objects.get(user=user)
-            except:
-                followingTableEntry = Followings(user=user, follower="")
-
-            followingTableList = str(followingTableEntry.follower)
-
-            if action == "follow":
-                # Update info for user who is being followed
-                user.followerCount += 1
-                updatedFollower = followingTableList + \
-                    str(request.user.id) + ","
-
-                # Update info for the user who is now following
-                updatedFollowingUser = str(
-                    follower.followingList) + str(user.id) + ","
-
-            else:
-                # Update info for user who is being followed
-                user.followerCount -= 1
-                followingTableList = followingTableList.split(',')
-                followingTableList.remove(str(request.user.id))
-                updatedFollower = str(followingTableList).translate(str.maketrans(
-                    {"'": "", "[": "", "]": "", " ": ""}))
-
-                # Update info for the user who is now following
-                updatedFollowingUser = User.objects.get(
-                    username=request.user).followingList
-                updatedFollowingUser = updatedFollowingUser.split(',')
-                updatedFollowingUser.remove(str(user.id))
-                updatedFollowingUser = str(updatedFollowingUser).translate(str.maketrans(
-                    {"'": "", "[": "", "]": "", " ": ""}))
-
-            followingTableEntry.follower = updatedFollower
-            follower.followingList = updatedFollowingUser
-
-            followingTableEntry.save()
-            follower.save()
-            user.save()
-
-    return render(request, "network/profil.html")
-
-
 @ensure_csrf_cookie
 def post_action(request, post_id):
     if request.method == "POST":
         data = json.loads(request.body)
-        print("DATA:", data)
         action = data["action"]
         username = request.user
         post = Post.objects.get(id=post_id)
@@ -275,12 +273,10 @@ def post_action(request, post_id):
                         id=post.id), who_liked=(str(username) + ','))
                     updatedColumn.save()
 
-                print("getLikeTableColumn: SUCCESS")
             else:
                 updatedLikes = post.likes - 1
                 getlikeColumn = Likes.objects.get(
                     post=Post.objects.get(id=post_id))
-                print("getLikeTableColumn: FAILED")
 
                 getLiker = str(getlikeColumn.who_liked)
                 getLiker = getLiker.split(',')
