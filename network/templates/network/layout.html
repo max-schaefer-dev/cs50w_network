@@ -13,14 +13,21 @@
     <link href="{% static 'network/styles.css' %}" rel="stylesheet">
 
     <!-- Import React and Babel -->
+    <!-- DEVELOPMENT VERSION 
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    -->
+    <!-- PRODUCTION VERSION -->
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
-        integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
+    <!-- Font Family -->
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,700;1,500&display=swap"
+        rel="stylesheet">
+
     {% block script %}
     {% endblock %}
 </head>
@@ -28,12 +35,18 @@
 <body>
     <div id="main-wrapper" class="container">
         <header>
-            <div style="width:275px;">
+            <div>
                 <nav class="nav flex-column">
                     <div style="position:fixed;">
                         <div id="navbar-brand">
                             <a href="{% url 'index' %}">
-                                <i class="fas fa-hippo"></i>
+                                <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 640 512">
+                                    <path fill="currentColor"
+                                        d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z">
+
+                                    </path>
+                                </svg>
                             </a>
                         </div>
 
@@ -42,38 +55,85 @@
                                 {% if user.is_authenticated %}
                                 <li class="nav-item">
                                     <a id="showProfile" class="nav-link"
-                                        href="{% url 'profil' request.user.username %}">
-                                        <i class="far fa-user-circle"></i>
-                                        <strong>
+                                        href="{% url 'profile' request.user.username %}">
+                                        <svg aria-hidden="true" focusable="false" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+                                            <path fill="currentColor"
+                                                d="M248 104c-53 0-96 43-96 96s43 96 96 96 96-43 96-96-43-96-96-96zm0 144c-26.5 0-48-21.5-48-48s21.5-48 48-48 48 21.5 48 48-21.5 48-48 48zm0-240C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-49.7 0-95.1-18.3-130.1-48.4 14.9-23 40.4-38.6 69.6-39.5 20.8 6.4 40.6 9.6 60.5 9.6s39.7-3.1 60.5-9.6c29.2 1 54.7 16.5 69.6 39.5-35 30.1-80.4 48.4-130.1 48.4zm162.7-84.1c-24.4-31.4-62.1-51.9-105.1-51.9-10.2 0-26 9.6-57.6 9.6-31.5 0-47.4-9.6-57.6-9.6-42.9 0-80.6 20.5-105.1 51.9C61.9 339.2 48 299.2 48 256c0-110.3 89.7-200 200-200s200 89.7 200 200c0 43.2-13.9 83.2-37.3 115.9z">
+                                            </path>
+                                        </svg>
+                                        <span>
                                             {{ request.user.username }}
-                                        </strong>
+                                        </span>
                                     </a>
                                 </li>
                                 {% endif %}
                                 <li class="nav-item">
-                                    <a id="allpostsBtn" class="nav-link" href="{% url 'index' %}"><i
-                                            class="fab fa-buffer"></i>
-                                        All Posts
+                                    <a id="allpostsBtn" class="nav-link" href="{% url 'index' %}">
+                                        <svg aria-hidden="true" focusable="false" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                            <path fill="currentColor"
+                                                d="M427.84 380.67l-196.5 97.82a18.6 18.6 0 0 1-14.67 0L20.16 380.67c-4-2-4-5.28 0-7.29L67.22 350a18.65 18.65 0 0 1 14.69 0l134.76 67a18.51 18.51 0 0 0 14.67 0l134.76-67a18.62 18.62 0 0 1 14.68 0l47.06 23.43c4.05 1.96 4.05 5.24 0 7.24zm0-136.53l-47.06-23.43a18.62 18.62 0 0 0-14.68 0l-134.76 67.08a18.68 18.68 0 0 1-14.67 0L81.91 220.71a18.65 18.65 0 0 0-14.69 0l-47.06 23.43c-4 2-4 5.29 0 7.31l196.51 97.8a18.6 18.6 0 0 0 14.67 0l196.5-97.8c4.05-2.02 4.05-5.3 0-7.31zM20.16 130.42l196.5 90.29a20.08 20.08 0 0 0 14.67 0l196.51-90.29c4-1.86 4-4.89 0-6.74L231.33 33.4a19.88 19.88 0 0 0-14.67 0l-196.5 90.28c-4.05 1.85-4.05 4.88 0 6.74z">
+                                            </path>
+                                        </svg>
+                                        <span>
+                                            All Posts
+                                        </span>
                                     </a>
                                 </li>
                                 {% if user.is_authenticated %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'following' %}"><i class="fas fa-users"></i>
-                                        Following</a>
+                                    <a class="nav-link" href="{% url 'following' %}">
+                                        <svg aria-hidden="true" focusable="false" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                                            <path fill="currentColor"
+                                                d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z">
+                                            </path>
+                                        </svg>
+                                        <span>
+                                            Following
+                                        </span>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>
-                                        Log
-                                        Out</a>
+                                    <a class="nav-link" href="{% url 'logout' %}">
+                                        <svg aria-hidden="true" focusable="false" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                            <path fill="currentColor"
+                                                d="M497 273L329 441c-15 15-41 4.5-41-17v-96H152c-13.3 0-24-10.7-24-24v-96c0-13.3 10.7-24 24-24h136V88c0-21.4 25.9-32 41-17l168 168c9.3 9.4 9.3 24.6 0 34zM192 436v-40c0-6.6-5.4-12-12-12H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h84c6.6 0 12-5.4 12-12V76c0-6.6-5.4-12-12-12H96c-53 0-96 43-96 96v192c0 53 43 96 96 96h84c6.6 0 12-5.4 12-12z">
+                                            </path>
+                                        </svg>
+                                        <span>
+                                            Log Out
+                                        </span>
+                                    </a>
                                 </li>
                                 {% else %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Log
-                                        In</a>
+                                    <a class="nav-link" href="{% url 'login' %}">
+                                        <svg aria-hidden="true" focusable="false" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                            <path fill="currentColor"
+                                                d="M416 448h-84c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h84c17.7 0 32-14.3 32-32V160c0-17.7-14.3-32-32-32h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zm-47-201L201 79c-15-15-41-4.5-41 17v96H24c-13.3 0-24 10.7-24 24v96c0 13.3 10.7 24 24 24h136v96c0 21.5 26 32 41 17l168-168c9.3-9.4 9.3-24.6 0-34z">
+                                            </path>
+                                        </svg>
+                                        <span>
+                                            Log In
+                                        </span>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'register' %}"><i class="far fa-registered"></i>
-                                        Register</a>
+                                    <a class="nav-link" href="{% url 'register' %}">
+                                        <svg aria-hidden="true" focusable="false" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                            <path fill="currentColor"
+                                                d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm110.442-81.791c-53.046-96.284-50.25-91.468-53.271-96.085 24.267-13.879 39.482-41.563 39.482-73.176 0-52.503-30.247-85.252-101.498-85.252h-78.667c-6.617 0-12 5.383-12 12V380c0 6.617 5.383 12 12 12h38.568c6.617 0 12-5.383 12-12v-83.663h31.958l47.515 89.303a11.98 11.98 0 0 0 10.593 6.36h42.81c9.14 0 14.914-9.799 10.51-17.791zM256.933 239.906h-33.875v-64.14h27.377c32.417 0 38.929 12.133 38.929 31.709-.001 20.913-11.518 32.431-32.431 32.431z">
+                                            </path>
+                                        </svg>
+                                        <span>
+                                            Register
+                                        </span>
+                                    </a>
                                 </li>
                                 {% endif %}
                             </ul>

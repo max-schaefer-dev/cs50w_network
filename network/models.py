@@ -25,20 +25,23 @@ class Post(models.Model):
     username = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="postBy")
     timestamp = models.DateTimeField(auto_now_add=True)
+    retweets = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     comments = models.IntegerField(default=0)
 
     def __str__(self):
         return f"User: {self.username}, Post: {self.text}"
 
-    def serialize(self, alreadyLiked, ownPost):
+    def serialize(self, alreadyLiked, alreadyRetweeted, ownPost):
         return {
             "id": self.id,
             "username": self.username.username,
             "text": self.text,
             "likes": self.likes,
+            "retweets": self.retweets,
             "comments": self.comments,
             "alreadyLiked": alreadyLiked,
+            "alreadyRetweeted": alreadyRetweeted,
             "ownPost": ownPost,
             "timestamp": self.timestamp.strftime("%Y-%d-%m, %H:%M:%S")
         }
@@ -51,6 +54,15 @@ class Likes(models.Model):
 
     def __str__(self):
         return f"Post: {self.post}, Likers: {self.who_liked}"
+
+
+class Retweets(models.Model):
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="postRetweetedBy")
+    who_retweeted = models.TextField(default="")
+
+    def __str__(self):
+        return f"Post: {self.post}, Retweets: {self.who_retweeted}"
 
 
 class Comments(models.Model):

@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block body %}
-<main id="main" data-vw={{view}}>
+<main id="main" data-vw={{view}} data-pn="{{ pageTitle }}">
     <div>
         <h1 id="page-title">{{ pageTitle }}</h1>
-        {% if view == "profil" %}
-        <div id="profil" class="element-control">
+        {% if view == "profile" %}
+        <div id="profile" class="element-control">
             {% if name == ' ' %}
-            <h2 id="profilName" data-op={{ ownProfil }} data-af={{ alreadyFollowing }}>{{ pageTitle }}</h2>
+            <h2 id="profileName" data-op={{ ownProfile }} data-af={{ alreadyFollowing }}>{{ pageTitle }}</h2>
             {% else %}
             <h2>{{ name }}</h2>
             {% endif %}
@@ -18,7 +18,7 @@
                 <span style="margin-right:10px;"><b id="followingCount">{{ followingCount }}</b> Following</span>
                 <span><b id="followerCount">{{ followerCount }}</b> Followers</span>
             </div>
-            {% if not ownProfil %}
+            {% if not ownProfile %}
             <div style="height:56px;">
                 {% if not alreadyFollowing %}
                 <button id="followBtn" class="btn btn-primary" value="follow">Follow</button>
@@ -55,5 +55,5 @@
 {% endblock %}
 
 {% block script %}
-<script type="text/babel" src="{% static 'network/main.js' %}"></script>
+<script type="text/babel" src="{% static 'network/App.js' %}"></script>
 {% endblock %}
